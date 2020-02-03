@@ -3,6 +3,9 @@
 namespace Renepardon\LaravelCodeGeneratorSwagger;
 
 use Illuminate\Support\ServiceProvider;
+use Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi\Parameter;
+use Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi\Response;
+use Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi\Schema;
 
 class LaravelCodeGeneratorSwaggerServiceProvider extends ServiceProvider
 {
@@ -40,7 +43,11 @@ class LaravelCodeGeneratorSwaggerServiceProvider extends ServiceProvider
             ], 'lang');*/
 
             // Registering package commands.
-            // $this->commands([]);
+            $this->commands([
+                Parameter::class,
+                Response::class,
+                Schema::class,
+            ]);
         }
     }
 

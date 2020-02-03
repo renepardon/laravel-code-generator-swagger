@@ -27,6 +27,9 @@
         "psy/psysh": "^0.9.12",
         "squizlabs/php_codesniffer": "^3.5"
     },
+    "suggest": {
+        "crestapps/laravel-code-generator": "This package gets extended by laravel-code-generator-swagger so you should really install it :)"
+    },
     "autoload": {
         "psr-4": {
             "Renepardon\\LaravelCodeGeneratorSwagger\\": "src"
