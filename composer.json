@@ -1,0 +1,56 @@
+{
+    "name": "renepardon/laravel-code-generator-swagger",
+    "description": "Additional code generator commands for the amazing laravel-code-generator package to also generate Swagger/OpenAPI specific files",
+    "keywords": [
+        "renepardon",
+        "laravel-code-generator-swagger"
+    ],
+    "homepage": "https://github.com/renepardon/laravel-code-generator-swagger",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Christoph, René Pardon",
+            "email": "rene.pardon@boonweb.de",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "crestapps/laravel-code-generator": "^2.4",
+        "illuminate/support": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Renepardon\\LaravelCodeGeneratorSwagger\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Renepardon\\LaravelCodeGeneratorSwagger\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Renepardon\\LaravelCodeGeneratorSwagger\\LaravelCodeGeneratorSwaggerServiceProvider"
+            ],
+            "aliases": {
+                "LaravelCodeGeneratorSwagger": "Renepardon\\LaravelCodeGeneratorSwagger\\LaravelCodeGeneratorSwaggerFacade"
+            }
+        }
+    }
+}
