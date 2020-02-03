@@ -21,8 +21,10 @@
         "illuminate/support": "^6.0"
     },
     "require-dev": {
+        "matthewbdaly/artisan-standalone": "^0.0.11",
         "orchestra/testbench": "^4.0",
         "phpunit/phpunit": "^8.0",
+        "psy/psysh": "^0.9.12",
         "squizlabs/php_codesniffer": "^3.5"
     },
     "autoload": {
