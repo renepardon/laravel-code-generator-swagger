@@ -13,6 +13,6 @@ class [% openapi_parameter_class %] extends ParametersFactory
      */
     public function build(): array
     {
-        return [% parameter_list %]
+        [% parameter_list %]
     }
 }

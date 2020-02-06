@@ -43,15 +43,10 @@ class Parameter extends Command
                             {model-name : The model name that this resource will represent.}
                             {--resource-file= : The name of the resource-file to import from.}
                             {--template-name= : The template name to use when generating the code.}
-                            {--force : This option will override the parameter fiel if one already exists.}';
+                            {--force : This option will override the parameter file if one already exists.}';
 
-    /**
-     * Reset database configuration.
-     */
     public function handle()
     {
-        $this->info('create:openapi-parameter - not yet implemented');
-
         $input = $this->getCommandInput();
 
         $resource = Resource::fromFile($input->resourceFile, $input->languageFileName ?: 'lcg');
@@ -61,6 +56,12 @@ class Parameter extends Command
         $this->info('Done!');
     }
 
+    /**
+     * @param \Renepardon\CodeGenerator\Models\Resource                   $resource
+     * @param \Renepardon\LaravelCodeGeneratorSwagger\Models\OpenApiInput $input
+     *
+     * @return bool|null
+     */
     protected function createParameter(Resource $resource, OpenApiInput $input)
     {
         $destinationFile = $this->getDestinationFile($input->modelName, $input->modelDirectory);
@@ -77,7 +78,13 @@ class Parameter extends Command
             ->info('An OpenApi parameter class was crafted successfully.');
     }
 
-    protected function replaceParameterList(&$stub, array $fields)
+    /**
+     * @param string $stub
+     * @param array  $fields
+     *
+     * @return $this
+     */
+    protected function replaceParameterList(string &$stub, array $fields)
     {
         $parameters = [];
         $parameters[] = 'return [';
@@ -87,6 +94,7 @@ class Parameter extends Command
             $required = $field->isRequired() ? 'true' : 'false';
             $dataType = $this->mapDataType($field->dataType);
 
+            // TODO skip 'id' field?!
             $parameters[] = <<<EOF
             Parameter::query()
                 ->name('{$field->name}')
