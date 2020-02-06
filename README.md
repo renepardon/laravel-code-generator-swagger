@@ -5,7 +5,7 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/renepardon/laravel-code-generator-swagger.svg?style=flat-square)](https://scrutinizer-ci.com/g/renepardon/laravel-code-generator-swagger)
 [![Total Downloads](https://img.shields.io/packagist/dt/renepardon/laravel-code-generator-swagger.svg?style=flat-square)](https://packagist.org/packages/renepardon/laravel-code-generator-swagger)
 
-Additional code generator commands for the amazing laravel-code-generator package to also generate Swagger/OpenAPI specific files
+Additional code generator commands for the laravel-code-generator package to also generate Swagger/OpenAPI specific files
 
 ## Installation
 
@@ -17,8 +17,10 @@ composer require renepardon/laravel-code-generator-swagger
 
 ## Usage
 
+Ensure the model "Whatever" already exists.
+
 ``` bash
-php artisan 
+php artisan create:openapi-parameter Whatever --template-name=openapi --resource-file=whatever.json
 ```
 
 ### Testing

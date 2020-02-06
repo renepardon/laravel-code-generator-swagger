@@ -1,8 +1,8 @@
 <?php
 
-/*
- * You can place your custom package configuration in here.
+/**
+ * Laravel Code Generator for OpenAPI related files
  */
 return [
-
+    'parameters_path' => 'OpenApi/Parameters',
 ];

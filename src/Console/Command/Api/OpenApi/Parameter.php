@@ -3,9 +3,23 @@
 namespace Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi;
 
 use Illuminate\Console\Command;
+use Renepardon\CodeGenerator\Models\Resource;
+use Renepardon\CodeGenerator\Support\Helpers;
+use Renepardon\CodeGenerator\Traits\CommonCommand;
+use Renepardon\CodeGenerator\Traits\ScaffoldTrait;
+use Renepardon\LaravelCodeGeneratorSwagger\Models\OpenApiInput;
+use Renepardon\LaravelCodeGeneratorSwagger\Support\Config;
+use Renepardon\LaravelCodeGeneratorSwagger\Support\OpenApi;
 
+/**
+ * Class Parameter
+ *
+ * @package Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi
+ */
 class Parameter extends Command
 {
+    use ScaffoldTrait, CommonCommand, OpenApi;
+
     /**
      * The console command name.
      *
@@ -25,7 +39,11 @@ class Parameter extends Command
      *
      * @var string
      */
-    protected $signature = 'create:openapi-parameter';
+    protected $signature = 'create:openapi-parameter
+                            {model-name : The model name that this resource will represent.}
+                            {--resource-file= : The name of the resource-file to import from.}
+                            {--template-name= : The template name to use when generating the code.}
+                            {--force : This option will override the parameter fiel if one already exists.}';
 
     /**
      * Reset database configuration.
@@ -33,5 +51,77 @@ class Parameter extends Command
     public function handle()
     {
         $this->info('create:openapi-parameter - not yet implemented');
+
+        $input = $this->getCommandInput();
+
+        $resource = Resource::fromFile($input->resourceFile, $input->languageFileName ?: 'lcg');
+
+        $this->printInfo('Scaffolding OpenAPI parameter for ' . $this->modelNamePlainEnglish($input->modelName) . '...');
+        $this->createParameter($resource, $input);
+        $this->info('Done!');
+    }
+
+    protected function createParameter(Resource $resource, OpenApiInput $input)
+    {
+        $destinationFile = $this->getDestinationFile($input->modelName, $input->modelDirectory);
+
+        if ($this->hasErrors($resource, $destinationFile)) {
+            return false;
+        }
+
+        $stub = $this->getStubContent('openapi-parameter');
+
+        return $this->replaceClassName($stub, $input->modelName)
+            ->replaceParameterList($stub, $resource->fields)
+            ->createFile($destinationFile, $stub)
+            ->info('An OpenApi parameter class was crafted successfully.');
+    }
+
+    protected function replaceParameterList(&$stub, array $fields)
+    {
+        $parameters = [];
+        $parameters[] = 'return [';
+
+        /** @var \Renepardon\CodeGenerator\Models\Field $field */
+        foreach ($fields as $field) {
+            $required = $field->isRequired() ? 'true' : 'false';
+            $dataType = $this->mapDataType($field->dataType);
+
+            $parameters[] = <<<EOF
+            Parameter::query()
+                ->name('{$field->name}')
+                ->description('{$field->name}')
+                ->required({$required})
+                ->schema(Schema::{$dataType}()),
+EOF;
+        }
+
+        $parameters[] = '];';
+
+        $this->replaceTemplate('parameter_list', join(PHP_EOL, $parameters), $stub);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function replaceClassName(&$stub, $modelName)
+    {
+        $replacement = $modelName . 'Parameters';
+
+        return $this->replaceTemplate('openapi_parameter_class', $replacement, $stub);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDestinationFile(string $name, string $path = null)
+    {
+        if (! empty($path)) {
+            $path = Helpers::getPathWithSlash($path);
+        }
+
+        return app_path(Config::getParametersPath($path . $name));
     }
 }
