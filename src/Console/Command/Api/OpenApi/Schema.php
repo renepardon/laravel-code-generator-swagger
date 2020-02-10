@@ -83,7 +83,7 @@ class Schema extends Command
      */
     protected function replaceSchemaObject(string &$stub, array $fields, OpenApiInput $input)
     {
-        $objectParts = [sprintf('Schema::object(\'%s\')->properties(', $input->modelName)];
+        $objectParts = [sprintf('return Schema::object(\'%s\')->properties(', $input->modelName)];
 
         /** @var \Renepardon\CodeGenerator\Models\Field $field */
         foreach ($fields as $field) {
