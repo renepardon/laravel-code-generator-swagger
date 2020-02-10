@@ -1,8 +1,8 @@
 .idea
 .DS_Store
 
+storage
 build
-composer.lock
 docs
 vendor
 coverage

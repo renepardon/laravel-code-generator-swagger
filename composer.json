@@ -17,13 +17,19 @@
     ],
     "require": {
         "php": "^7.1",
-        "crestapps/laravel-code-generator": "^2.4",
-        "illuminate/support": "^6.0"
+        "illuminate/support": "^6.0",
+        "renepardon/laravel-code-generator": "^1.0.3"
     },
     "require-dev": {
+        "matthewbdaly/artisan-standalone": "^0.0.11",
         "orchestra/testbench": "^4.0",
         "phpunit/phpunit": "^8.0",
+        "psy/psysh": "^0.9.12",
         "squizlabs/php_codesniffer": "^3.5"
+    },
+    "suggest": {
+        "crestapps/laravel-code-generator": "This package gets extended by laravel-code-generator-swagger so you should really install it :)",
+        "vyuldashev/laravel-openapi": "OpenAPI annotations and documentation related stuff"
     },
     "autoload": {
         "psr-4": {
@@ -38,7 +44,6 @@
     "scripts": {
         "test": "vendor/bin/phpunit",
         "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
     },
     "config": {
         "sort-packages": true
@@ -47,10 +52,7 @@
         "laravel": {
             "providers": [
                 "Renepardon\\LaravelCodeGeneratorSwagger\\LaravelCodeGeneratorSwaggerServiceProvider"
-            ],
-            "aliases": {
-                "LaravelCodeGeneratorSwagger": "Renepardon\\LaravelCodeGeneratorSwagger\\LaravelCodeGeneratorSwaggerFacade"
-            }
+            ]
         }
     }
 }
