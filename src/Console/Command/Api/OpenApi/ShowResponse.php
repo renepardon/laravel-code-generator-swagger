@@ -11,41 +11,36 @@ use Renepardon\LaravelCodeGeneratorSwagger\Models\OpenApiInput;
 use Renepardon\LaravelCodeGeneratorSwagger\Support\Config;
 use Renepardon\LaravelCodeGeneratorSwagger\Support\OpenApi;
 
-/**
- * Class Parameter
- *
- * @package Renepardon\LaravelCodeGeneratorSwagger\Console\Command\Api\OpenApi
- */
-class Parameter extends Command
+class ShowResponse extends Command
 {
     use ScaffoldTrait, CommonCommand, OpenApi;
 
-    const TEMPLATE = 'openapi-parameter';
+    const TEMPLATE = 'openapi-show-response';
 
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'create:openapi-parameter';
+    protected $name = 'create:openapi-show-response';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create an OpenAPI parameter class';
+    protected $description = 'Create an OpenAPI schema class';
 
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'create:openapi-parameter
+    protected $signature = 'create:openapi-show-response
                             {model-name : The model name that this resource will represent.}
                             {--resource-file= : The name of the resource-file to import from.}
                             {--template-name= : The template name to use when generating the code.}
-                            {--force : This option will override the parameter file if one already exists.}';
+                            {--force : This option will override the schema file if one already exists.}';
 
     public function handle()
     {
@@ -53,8 +48,8 @@ class Parameter extends Command
 
         $resource = Resource::fromFile($input->resourceFile, $input->languageFileName ?: 'lcg');
 
-        $this->printInfo('Scaffolding OpenAPI parameter for ' . $this->modelNamePlainEnglish($input->modelName) . '...');
-        $this->createParameter($resource, $input);
+        $this->printInfo('Scaffolding OpenAPI "show" Response for ' . $this->modelNamePlainEnglish($input->modelName) . '...');
+        $this->createResponse($resource, $input);
         $this->info('Done!');
     }
 
@@ -64,7 +59,7 @@ class Parameter extends Command
      *
      * @return bool|null
      */
-    protected function createParameter(Resource $resource, OpenApiInput $input)
+    protected function createResponse(Resource $resource, OpenApiInput $input)
     {
         $destinationFile = $this->getDestinationFile($input->modelName, $input->modelDirectory);
 
@@ -75,7 +70,7 @@ class Parameter extends Command
         $stub = $this->getStubContent(static::TEMPLATE);
 
         return $this->replaceClassName($stub, $input->modelName)
-            ->replaceParameterList($stub, $resource->fields)
+            ->replaceSchemaObject($stub, $resource->fields, $input)
             ->createFile($destinationFile, $stub)
             ->info('An OpenApi parameter class was crafted successfully.');
     }
@@ -86,32 +81,30 @@ class Parameter extends Command
      *
      * @return $this
      */
-    protected function replaceParameterList(string &$stub, array $fields)
+    protected function replaceSchemaObject(string &$stub, array $fields, OpenApiInput $input)
     {
-        $parameters = [];
-        $parameters[] = 'return [';
+        $this->replaceTemplate('model_name', $input->modelName, $stub);
 
-        /** @var \Renepardon\CodeGenerator\Models\Field $field */
-        foreach ($fields as $field) {
-            if ($field->name === 'id') {
-                continue;
-            }
+        $responseObject = <<<RESPONSE_OBJECT
+        \$response = Schema::object()->properties(
+            Schema::object('data')
+                ->properties(
+                    (new {$input->modelName}Schema())->build()
+                ),
+            );
+RESPONSE_OBJECT;
 
-            $required = $field->isRequired() ? 'true' : 'false';
-            $dataType = $this->mapDataType($field->dataType);
+        $this->replaceTemplate('response_object', $responseObject, $stub);
 
-            $parameters[] = <<<EOF
-            Parameter::query()
-                ->name('{$field->name}')
-                ->description('{$field->name}')
-                ->required({$required})
-                ->schema(Schema::{$dataType}()),
-EOF;
-        }
+        $returnObject = <<<RETURN_OBJECT
+        return Response::create('{$input->modelName}Response')
+            ->description('Successful response')
+            ->content(
+                MediaType::json()->schema(\$response)
+            );
+RETURN_OBJECT;
 
-        $parameters[] = '];';
-
-        $this->replaceTemplate('parameter_list', join(PHP_EOL, $parameters), $stub);
+        $this->replaceTemplate('return_statement', $returnObject, $stub);
 
         return $this;
     }
@@ -121,9 +114,9 @@ EOF;
      */
     protected function replaceClassName(&$stub, $modelName)
     {
-        $replacement = $modelName . 'Parameters';
+        $replacement = sprintf('Show%sResponse', $modelName);
 
-        return $this->replaceTemplate('openapi_parameter_class', $replacement, $stub);
+        return $this->replaceTemplate('openapi_show_response_class', $replacement, $stub);
     }
 
     /**
@@ -135,6 +128,6 @@ EOF;
             $path = Helpers::getPathWithSlash($path);
         }
 
-        return app_path(Config::getParametersPath($path . $name));
+        return app_path(Config::getResponsePath($path . sprintf('Show%sResponse.php', $name)));
     }
 }

@@ -22,6 +22,7 @@ trait OpenApi
      */
     protected function mapDataType(string $type): string
     {
+        // TODO read mapping array to config
         switch ($type) {
             case'int':
                 return 'integer';
@@ -49,7 +50,10 @@ trait OpenApi
         return $hasErrors;
     }
 
-    protected function getCommandInput()
+    /**
+     * @return \Renepardon\LaravelCodeGeneratorSwagger\Models\OpenApiInput|\Renepardon\CodeGenerator\Models\Bases\ScaffoldInputBase
+     */
+    protected function getCommandInput(): OpenApiInput
     {
         $base = new ScaffoldInputBase(trim($this->argument('model-name')));
         $base->resourceFile = $this->option('resource-file');

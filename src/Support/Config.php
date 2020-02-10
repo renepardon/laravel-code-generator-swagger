@@ -30,4 +30,16 @@ class Config extends BaseConfig
 
         return Helpers::fixPathSeparator(Helpers::getPathWithSlash($schemasPath)) . $file . 'Schema.php';
     }
+
+    /**
+     * @param string $file
+     *
+     * @return string
+     */
+    public static function getResponsePath(string $file = ''): string
+    {
+        $responsesPath = app('config')->get('laravel-code-generator-swagger.response_path');
+
+        return Helpers::fixPathSeparator(Helpers::getPathWithSlash($responsesPath)) . $file;
+    }
 }

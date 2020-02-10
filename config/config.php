@@ -6,4 +6,5 @@
 return [
     'parameters_path' => 'OpenApi/Parameters',
     'schemas_path'    => 'OpenApi/Schemas',
+    'response_path'   => 'OpenApi/Responses',
 ];

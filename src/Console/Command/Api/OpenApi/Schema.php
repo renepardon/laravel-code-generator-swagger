@@ -15,6 +15,8 @@ class Schema extends Command
 {
     use ScaffoldTrait, CommonCommand, OpenApi;
 
+    const TEMPLATE = 'openapi-schema';
+
     /**
      * The console command name.
      *
@@ -65,7 +67,7 @@ class Schema extends Command
             return false;
         }
 
-        $stub = $this->getStubContent('openapi-schema');
+        $stub = $this->getStubContent(static::TEMPLATE);
 
         return $this->replaceClassName($stub, $input->modelName)
             ->replaceSchemaObject($stub, $resource->fields, $input)
@@ -139,21 +141,3 @@ class Schema extends Command
         return app_path(Config::getSchemasPath($path . $name));
     }
 }
-
-/*
- * TODO
- openapi_schema_class: ModelSchema
- schema_object:
-
-    Schema::object('MediaI18n')
-        ->properties(
-            Schema::integer('id')->default(0),
-            Schema::integer('media_id')->default(0),
-            Schema::integer('locale_id')->default(0),
-            Schema::string('title')->default(null),
-            Schema::string('description')->default(null),
-            Schema::string('deleted_at')->format(Schema::FORMAT_DATE_TIME)->default(null),
-            Schema::string('created_at')->format(Schema::FORMAT_DATE_TIME)->default(null),
-            Schema::string('updated_at')->format(Schema::FORMAT_DATE_TIME)->default(null)
-        );
-*/
